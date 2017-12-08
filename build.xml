@@ -16,6 +16,7 @@
 	
     <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce" classpathref="class.path"/>
 	
+	<!--
 	<target name="FixProfiles"> 
 		<echo message="removing userPermissions from all profiles" />
 		<mkdir dir="./src/profiles" />
@@ -42,7 +43,7 @@
 					/>
 		  </replaceregexp>
 		  
-		  <!-- remove blank lines -->
+		  
 			<replaceregexp
 				match="(\r?\n)\s*\r?\n"
 				replace="\1"
@@ -53,9 +54,7 @@
 					  includes="*.profile"
 					/>
 			</replaceregexp> 
-		<!--	
-		<antcall target="metadataHelper.deleteMetadata" />				
--->		
+		
 		</target>
 		
     <target name="RetrieveFromQA1">
@@ -104,8 +103,8 @@
 		<echo message="${packageXMLmessage}" />
 	</target>
 	
-	<property name="branchName" value="Path2"/><!--jenkins -->
-	<property name="stopbranchName" value=""/><!-- Tech leads -->
+	<property name="branchName" value="Path2"/>
+	<property name="stopbranchName" value=""/>
                 
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
@@ -132,5 +131,9 @@
 		<echo message="Udeploy environment Name:${ENV_NAME}"/>
 		<echo message="SandBox Env Name:${SalesforceUser}"/> 
 	</target>
+	-->
+	
+	
 	
 </project>
+
