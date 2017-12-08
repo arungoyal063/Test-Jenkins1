@@ -5,7 +5,7 @@
 		<sf:deploy username="${sfUser}" password="${sfPassword}" serverurl="${sfSandbox.serverurl}"
 		deployRoot="./src"
         maxPoll="1000" 
-        testLevel="${test.Level.sandbox}"
+        <!--testLevel="${test.Level.sandbox}"-->
         checkOnly="false" 
         pollWaitMillis="10000" 
         rollbackOnError="true">
