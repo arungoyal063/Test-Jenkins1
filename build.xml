@@ -1,0 +1,136 @@
+<project name="Deployment Scripts" default="FixProfiles" basedir="." xmlns:sf="antlib:com.salesforce">
+	<property file="config/build.properties"/>
+	
+	<!--
+	<import file="config/ManipulateMetadata.xml" as="metadataHelper"/>
+	-->
+	
+	<import file="config/Udeploy.xml" as="Ucode"/>
+	
+	<path id="class.path">
+		<pathelement location="${build}"/>
+	  <fileset dir="./lib">
+		<include name="**/*.jar" />
+	  </fileset>
+	</path>
+	
+    <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce" classpathref="class.path"/>
+	
+	<target name="FixProfiles"> 
+		<echo message="removing userPermissions from all profiles" />
+		<mkdir dir="./src/profiles" />
+		<replaceregexp
+			match="\&lt;userPermissions\&gt;(.*?)\&lt;/userPermissions\&gt;"
+			replace=""
+			flags="gs"
+			byline="false">
+				<fileset
+				  dir="./src/profiles"
+				  includes="*.profile"
+				/>
+	    </replaceregexp>
+		
+			<echo message="removing loginIpRanges from all profiles" />
+			<replaceregexp
+				match="\&lt;loginIpRanges\&gt;(.*?)\&lt;/loginIpRanges\&gt;"
+				replace=""
+				flags="gs"
+				byline="false">
+					<fileset
+					  dir="./src/profiles"
+					  includes="*.profile"
+					/>
+		  </replaceregexp>
+		  
+		  <!-- remove blank lines -->
+			<replaceregexp
+				match="(\r?\n)\s*\r?\n"
+				replace="\1"
+				flags="g"
+				byline="false">
+					<fileset
+					  dir="./src/profiles"
+					  includes="*.profile"
+					/>
+			</replaceregexp> 
+		<!--	
+		<antcall target="metadataHelper.deleteMetadata" />				
+-->		
+		</target>
+		
+    <target name="RetrieveFromQA1">
+		<echo message="Going to retrieve metadata from QA1 as per package.xml" />
+		<sf:retrieve 
+			username="${cpq.qa1.username}"
+			password="${cpq.qa1.pwd}" 
+			serverurl="${sfSandbox.serverurl}"
+			retrieveTarget="src"
+			unpackaged="src/package.xml"
+			/> 
+	        <antcall target="printPackageXML" />
+		<antcall target="FixProfiles" />
+	</target>
+	
+	<target name="RetrieveFromQA2">
+		<echo message="Going to retrieve metadata from QA2 as per package.xml" />
+		<sf:retrieve 
+			username="${cpq.qa2.username}"
+			password="${cpq.qa2.pwd}" 
+			serverurl="${sfSandbox.serverurl}"
+			retrieveTarget="src"
+			unpackaged="src/package.xml"
+			/> 
+	        <antcall target="printPackageXML" />
+		<antcall target="FixProfiles" />
+	</target>
+	
+	<target name="RetrieveFromQA3">
+		<echo message="Going to retrieve metadata from QA3 as per package.xml" />
+		<sf:retrieve 
+			username="${cpq.qa3.username}"
+			password="${cpq.qa3.pwd}" 
+			serverurl="${sfSandbox.serverurl}"
+			retrieveTarget="src"
+			unpackaged="src/package.xml"
+			/> 
+	        <antcall target="printPackageXML" />
+		<antcall target="FixProfiles" />
+	</target>
+ 
+	<target name="printPackageXML">
+		<loadresource property="packageXMLmessage">
+	       		<file file="src/package.xml"/>
+	   	</loadresource>
+		<echo message="${packageXMLmessage}" />
+	</target>
+	
+	<property name="branchName" value="Path2"/><!--jenkins -->
+	<property name="stopbranchName" value=""/><!-- Tech leads -->
+                
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="ant-contrib-1.0b3.jar" />
+		</classpath>
+	</taskdef>
+
+	<if>
+		<equals arg1="${branchName}" arg2="${stopbranchName}" />
+		<then>
+			<property name="runBuild" value="true"/>
+		</then>
+		<else>
+			<property name="runBuild" value="false"/>
+		</else>                                
+	</if>
+	
+	<target name="isBuildAllowed" if="${runBuild}">
+		<fail message="Build blocked on ${branchName}. Contact team leads"/>
+	</target>
+	
+	<target name="Environments">
+		<echo message="Branch name:${Branch}"/>
+		<echo message="Udeploy environment Name:${ENV_NAME}"/>
+		<echo message="SandBox Env Name:${SalesforceUser}"/> 
+	</target>
+	
+</project>
