@@ -1,0 +1,27 @@
+<project name="Udeploy Scripts" default="Ucodevalidation" basedir="." xmlns:sf="antlib:com.salesforce">
+		
+	<target name="Ucodedeploy">
+		 <antcall target="printPackageXML" />
+		<sf:deploy username="${sfUser}" password="${sfPassword}" serverurl="${sfSandbox.serverurl}"
+		deployRoot="./src"
+        maxPoll="1000" 
+        testLevel="${test.Level.sandbox}"
+        checkOnly="false" 
+        pollWaitMillis="10000" 
+        rollbackOnError="true">
+	</sf:deploy>
+	</target>
+	
+	<target name="Ucodevalidation">
+		 <antcall target="printPackageXML" />
+		<sf:deploy username="${sfUser}" password="${sfPassword}" serverurl="${sfSandbox.serverurl}"
+		deployRoot="./src"
+        maxPoll="1000" 
+        testLevel="${test.Level.sandbox}"
+        checkOnly="true" 
+        pollWaitMillis="10000" 
+        rollbackOnError="true">
+	</sf:deploy>
+	</target>
+	
+</project>
